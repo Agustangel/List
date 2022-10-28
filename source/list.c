@@ -61,7 +61,7 @@ int list_dtor(list_t* list)
 
 //=========================================================================
 
-int push_front(list_t* list, size_t value)
+int push_back(list_t* list, size_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
 
