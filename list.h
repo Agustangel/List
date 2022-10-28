@@ -33,24 +33,25 @@ typedef struct list_t
 
 enum list_error_names
 {
-    ERR_LIST_BAD_POINTER      = -9,
+    ERR_LIST_BAD_PTR          = -9,
     ERR_LIST_INC_INPUT        = -8,
     ERR_LIST_OUT_MEMORY       = -7,
+    ERR_LIST_BAD_SIZE         = -6,
     ERR_LIST_NULL_POINTER     = -2,
     ERR_LIST_NEGATIVE_COUNT   = -1,
 };
 
-#define CHECK(condition, ret)                             \
+#define CHECK(condition, retval)                          \
                                                           \
     int condition__ = condition;                          \
     if (!condition__)                                     \
     {                                                     \
-        ASSERT(condition__, #condition);                  \
-        return ret;                                       \
-    }                                                     \
+        ASSERT(condition__, #condition, retval);          \
+        return retval;                                    \
+    };                                                    \
 
 #ifdef DEBUG
-    #define ASSERT(condition, message)                    \
+    #define ASSERT(condition, message, retval)            \
                                                           \
     if (!condition)                                       \
     {                                                     \
@@ -60,7 +61,8 @@ enum list_error_names
         fprintf(stderr, "    File ----- %s\n", __FILE__); \
         fprintf(stderr, "    Function - %s\n", __func__); \
         fprintf(stderr, "    Line ----- %d\n", __LINE__); \
-    }                                                     \
+        exit(ret);                                        \
+    }
 #else
     #define ASSERT(condition, message){}
 #endif

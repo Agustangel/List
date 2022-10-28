@@ -6,17 +6,9 @@
 //=========================================================================
 int list_ctor(list_t* list, size_t capacity)
 {
-    if(list == NULL)
-    {
-        fprintf(stderr, RED "ERROR: " RESET "INVALID POINTER TO LIST.\n");
-        exit(ERR_LIST_NULL_POINTER);
-    }
+    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(capacity >= 0, ERR_LIST_BAD_SIZE);
 
-    if(capacity < 0)
-    {
-        fprintf(stderr, RED "ERROR: " RESET "INCORRECT SIZE OF LIST.\n");
-        exit(ERR_LIST_INC_INPUT);
-    }
     if(capacity == 0)
     {
         list->nodes = NULL;
@@ -25,22 +17,22 @@ int list_ctor(list_t* list, size_t capacity)
     }
 
     list = (list_t*) calloc(capacity, sizeof(list_t));
-    if(list == NULL)
-    {
-        fprintf(stderr, RED "ERROR: " RESET "OUT OF MEMORY.\n");
-        return ERR_LIST_OUT_MEMORY;
-    }
+    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
 
     list->nodes[NULL_INDEX].data = DATA_POISON;
     list->capacity = capacity;
     list->free = NULL_INDEX;
     list_init_nodes(list, 1);
+
+    return 0;
 }
 
 //=========================================================================
 
 int list_init_nodes(list_t* list, listIndex_t start)
 {
+    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+
     for(int idx = start; idx < list->capacity; ++idx)
     {
         list->nodes[idx].data = DATA_POISON;
@@ -56,6 +48,8 @@ int list_init_nodes(list_t* list, listIndex_t start)
 
 int list_dtor(list_t* list)
 {
+    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+
     free(list->nodes);
     list->nodes = NULL;
     list->capacity = SIZE_MAX;
