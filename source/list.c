@@ -7,7 +7,7 @@
 //=========================================================================
 int list_ctor(list_t* list, size_t capacity)
 {
-    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(capacity >= 0, ERR_LIST_BAD_SIZE);
 
     if(capacity == 0)
@@ -18,7 +18,7 @@ int list_ctor(list_t* list, size_t capacity)
     }
 
     list->nodes = (node_t*) calloc(capacity + 1, sizeof(node_t));
-    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
     list->nodes[NULL_INDEX].data = DATA_POISON;
     list->capacity = capacity;
@@ -32,7 +32,7 @@ int list_ctor(list_t* list, size_t capacity)
 
 int list_init_nodes(list_t* list, listIndex_t start)
 {
-    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
     for(int idx = start; idx < list->capacity; ++idx)
     {
@@ -49,7 +49,7 @@ int list_init_nodes(list_t* list, listIndex_t start)
 
 int list_dtor(list_t* list)
 {
-    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
     free(list->nodes);
     list->nodes = NULL;
@@ -63,10 +63,16 @@ int list_dtor(list_t* list)
 
 int push_back(list_t* list, size_t value)
 {
-    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+
+    //TODO сделать push в изначально аллоцированную память
+    //создать итератор на DATA_POISON. Передать его в ф-ию, проверить, 
+    //является ли соотв. ячейка заполненной NAN. Если да - пушить туда
 
     list->nodes[list->capacity].next = list->capacity + 1;
+
     ++list->capacity;
+    CHECK(list->capacity != SIZE_MAX, ERR_LIST_OVERFLOW);
 
     list->nodes[list->capacity].data = value;
     list->nodes[list->capacity].next = list->free;
@@ -77,9 +83,42 @@ int push_back(list_t* list, size_t value)
 
 //=========================================================================
 
+int pop_back(list_t* list)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+
+    list->nodes[list->capacity].data = FREE_POISON;
+    list->nodes[list->capacity].next = FREE_POISON;
+    list->nodes[list->capacity].prev = FREE_POISON;
+
+    --list->capacity;
+    CHECK(list->capacity > 0, ERR_LIST_UNDERFLOW);
+
+    list->nodes[list->capacity].next = list->free;
+    list->nodes[list->capacity].prev = list->capacity - 1;
+
+    return 0;
+}
+
+//=========================================================================
+
+int push_front()
+{
+
+}
+
+//=========================================================================
+
+int pop_front()
+{
+
+}
+
+//=========================================================================
+
 int list_dump(list_t* list)
 {
-    CHECK(list !=  NULL, ERR_LIST_BAD_PTR);
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
     printf("capacity = %zu\n", list->capacity);
 

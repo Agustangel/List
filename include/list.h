@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 
-#define POISON 666
+#define FREE_POISON -1
 #define DATA_POISON NAN
 #define INDEX_POISON SIZE_MAX
 #define NULL_INDEX 0
@@ -35,11 +35,12 @@ typedef struct list_t
 
 enum list_error_names
 {
-    ERR_LIST_BAD_PTR          = -9,
+    ERR_LIST_NULL_PTR         = -9,
     ERR_LIST_INC_INPUT        = -8,
     ERR_LIST_OUT_MEMORY       = -7,
     ERR_LIST_BAD_SIZE         = -6,
-    ERR_LIST_NULL_POINTER     = -2,
+    ERR_LIST_UNDERFLOW        = -5,
+    ERR_LIST_OVERFLOW         = -4,
     ERR_LIST_NEGATIVE_COUNT   = -1,
 };
 
@@ -73,3 +74,5 @@ int list_ctor(list_t* list, size_t capacity);
 int list_init_nodes(list_t* list, listIndex_t start);
 int list_dtor(list_t* list);
 int list_dump(list_t* list);
+int push_back(list_t* list, size_t value);
+int pop_back(list_t* list);
