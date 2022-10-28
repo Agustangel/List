@@ -10,9 +10,9 @@ int main()
     list_t* list;
     size_t capacity = 0;
     scanf("%zu", &capacity);
-    printf("%zu\n", capacity);
 
     list_ctor(list, capacity);
+    list_dump(list);
     list_dtor(list);
 
     return 0;

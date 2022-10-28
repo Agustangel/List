@@ -13,6 +13,8 @@
 typedef double elem_t;
 typedef size_t listIndex_t;
 
+static int condition__;
+
 
 typedef struct node_t
 {
@@ -43,7 +45,7 @@ enum list_error_names
 
 #define CHECK(condition, retval)                          \
                                                           \
-    int condition__ = condition;                          \
+    condition__ = condition;                              \
     if (!condition__)                                     \
     {                                                     \
         ASSERT(condition__, #condition, retval);          \
@@ -51,7 +53,7 @@ enum list_error_names
     };                                                    \
 
 #ifdef DEBUG
-    #define ASSERT(condition, message)                    \
+    #define ASSERT(condition, message, retval)            \
                                                           \
     if (!condition)                                       \
     {                                                     \
@@ -64,9 +66,10 @@ enum list_error_names
         exit(retval);                                     \
     }
 #else
-    #define ASSERT(condition, message){}
+    #define ASSERT(condition, message, retval){}
 #endif
 
 int list_ctor(list_t* list, size_t capacity);
 int list_init_nodes(list_t* list, listIndex_t start);
 int list_dtor(list_t* list);
+int list_dump(list_t* list);
