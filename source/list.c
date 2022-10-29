@@ -13,8 +13,9 @@ int list_ctor(list_t* list, size_t capacity)
     if(capacity == 0)
     {
         list->nodes = NULL;
-        list->capacity = 0;
         list->free = NULL_INDEX;
+        list->capacity = 0;
+        list->size = 0;
     }
 
     list->nodes = (node_t*) calloc(capacity + 1, sizeof(node_t));
@@ -22,6 +23,7 @@ int list_ctor(list_t* list, size_t capacity)
 
     list->nodes[NULL_INDEX].data = DATA_POISON;
     list->capacity = capacity;
+    list->size = 0;
     list->free = NULL_INDEX;
     list_init_nodes(list, 1);
 
@@ -65,18 +67,15 @@ int push_back(list_t* list, size_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    //TODO сделать push в изначально аллоцированную память
-    //создать итератор на DATA_POISON. Передать его в ф-ию, проверить, 
-    //является ли соотв. ячейка заполненной NAN. Если да - пушить туда
+    if (list->size + 1 == list->capacity)
+    {
+        list_resize(list);
+    }
+    ++list->size;
 
-    list->nodes[list->capacity].next = list->capacity + 1;
-
-    ++list->capacity;
-    CHECK(list->capacity != SIZE_MAX, ERR_LIST_OVERFLOW);
-
-    list->nodes[list->capacity].data = value;
-    list->nodes[list->capacity].next = list->free;
-    list->nodes[list->capacity].prev = list->capacity - 1;
+    list->nodes[list->size].data = value;
+    list->nodes[list->size].next = list->free;
+    list->nodes[list->capacity].prev = list->size - 1;
 
     return 0;
 }
@@ -87,31 +86,29 @@ int pop_back(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    list->nodes[list->capacity].data = FREE_POISON;
-    list->nodes[list->capacity].next = FREE_POISON;
-    list->nodes[list->capacity].prev = FREE_POISON;
+    list->nodes[list->size].data = FREE_POISON;
+    list->nodes[list->size].next = FREE_POISON;
+    list->nodes[list->size].prev = FREE_POISON;
 
-    --list->capacity;
-    CHECK(list->capacity > 0, ERR_LIST_UNDERFLOW);
+    --list->size;
+    CHECK(list->size > 0, ERR_LIST_UNDERFLOW);
 
-    list->nodes[list->capacity].next = list->free;
-    list->nodes[list->capacity].prev = list->capacity - 1;
+    list->nodes[list->size].next = list->free;
+    list->nodes[list->size].prev = list->capacity - 1;
 
     return 0;
 }
 
 //=========================================================================
 
-int push_front()
+int list_resize(list_t* list)
 {
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-}
+    list->capacity *= 2;
+    CHECK(list->capacity != SIZE_MAX, ERR_LIST_OVERFLOW);
 
-//=========================================================================
-
-int pop_front()
-{
-
+    //realloc prev/next/data
 }
 
 //=========================================================================

@@ -29,7 +29,9 @@ typedef struct list_t
 {  
     node_t* nodes;
     listIndex_t free;
+    
     size_t capacity;
+    size_t size;
 
 }list_t;
 
