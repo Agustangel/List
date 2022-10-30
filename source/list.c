@@ -10,9 +10,10 @@ int list_ctor(list_t* list, size_t capacity)
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(capacity > 0, ERR_LIST_BAD_SIZE);
 
-    list->data = (elem_t*) calloc(capacity + 1, sizeof(elem_t));
-    list->next = (listIndex_t*) calloc(capacity + 1, sizeof(listIndex_t));
-    list->prev = (listIndex_t*) calloc(capacity + 1, sizeof(listIndex_t));
+    list->data = (elem_t*) calloc(capacity + 2, sizeof(elem_t));
+    list->next = (listIndex_t*) calloc(capacity + 2, sizeof(listIndex_t));
+    list->prev = (listIndex_t*) calloc(capacity + 2, sizeof(listIndex_t));
+
     CHECK(list->data !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(list->next !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(list->prev !=  NULL, ERR_LIST_NULL_PTR);
@@ -20,14 +21,13 @@ int list_ctor(list_t* list, size_t capacity)
     list->data[NULL_INDEX] = DATA_POISON;
     list->next[NULL_INDEX] = INDEX_POISON;
     list->prev[NULL_INDEX] = INDEX_POISON;
-    list_init_data(list, 1);
+    list_init_data(list, START_INDEX);
 
     list->capacity = capacity;
-    list->size = 0;
 
-    list->free = 1;
-    list->head = INDEX_POISON;
-    list->tail = INDEX_POISON;
+    list->head = START_INDEX;
+    list->tail = START_INDEX;
+    list->free = START_INDEX + 1;
 
     return 0;
 }
@@ -41,8 +41,8 @@ int list_init_data(list_t* list, listIndex_t start)
     for(int idx = start; idx < list->capacity; ++idx)
     {
         list->data[idx] = DATA_POISON;
-        list->next[idx] = INDEX_POISON;
-        list->prev[idx] = INDEX_POISON;
+        list->next[idx] = FREE_INDEX;
+        list->prev[idx] = FREE_INDEX;
     }
 
     return 0;
@@ -82,7 +82,15 @@ int push_back(list_t* list, elem_t value)
     
     list->data[list->tail] = value;
     list->next[list->tail] = FREE_INDEX;
-    //list->prev[list->tail] = list->next[];
+
+    for(listIndex_t idx = list->head; idx < list->tail; ++idx)
+    {
+        if((list->next[idx] == FREE_INDEX) && (list->prev[idx] != FREE_INDEX))
+        {
+            list->next[idx] = list->tail; // physical number of tail
+            list->prev[list->tail] = idx; 
+        }
+    }
 
     return 0;
 }
@@ -127,8 +135,8 @@ int list_resize(list_t* list)
     for(long long i = list->capacity / 2; i < list->capacity; i++)
     {
         list->data[i] = DATA_POISON;
-        list->next[i] = INDEX_POISON;
-        list->prev[i] = INDEX_POISON;
+        list->next[i] = FREE_INDEX;
+        list->prev[i] = FREE_INDEX;
     }
 
     return 0;

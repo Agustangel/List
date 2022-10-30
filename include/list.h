@@ -7,6 +7,7 @@
 
 #define FREE_INDEX -1
 #define INDEX_POISON -3
+#define START_INDEX 1
 #define DATA_POISON NAN
 #define NULL_INDEX 0
 
@@ -27,7 +28,6 @@ typedef struct list_t
     listIndex_t tail;
     
     size_t capacity;
-    size_t size;
 
 }list_t;
 
@@ -69,8 +69,9 @@ enum list_error_names
 #endif
 
 int list_ctor(list_t* list, size_t capacity);
-int list_init_nodes(list_t* list, listIndex_t start);
+int list_init_data(list_t* list, listIndex_t start);
 int list_dtor(list_t* list);
 int list_dump(list_t* list);
 int push_back(list_t* list, elem_t value);
 int pop_back(list_t* list);
+int list_resize(list_t* list);
