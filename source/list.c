@@ -4,6 +4,7 @@
 #include "list.h"
 
 
+// #TODO change array free; add negative number in array next for them
 //=========================================================================
 int list_ctor(list_t* list, size_t capacity)
 {
@@ -113,10 +114,16 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
     listIndex_t position = get_physical_number(list, lognum);
     CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
-    list->data[list->free] = value; //change list->free
-    list->prev[list->free] = position;
-    //list->next[list->free] = list->next[lognum];
+    list->data[list->free] = value;
+    list->prev[list->free] = position;              // position -> free
+    list->next[list->free] = list->next[position];  // free -> next[position]
 
+    list->next[position] = list->free;
+    list->prev[list->next[list->free]] = list->free;
+
+    list->free = -list->next[list->free];          // next[free]; free elems in array next are negative
+
+    return 0;
 }
 
 //=========================================================================
