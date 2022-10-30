@@ -5,9 +5,9 @@
 #include <stdint.h>
 
 
-#define FREE_POISON -1
+#define FREE_INDEX -1
+#define INDEX_POISON -3
 #define DATA_POISON NAN
-#define INDEX_POISON SIZE_MAX
 #define NULL_INDEX 0
 
 typedef double elem_t;
@@ -16,19 +16,15 @@ typedef size_t listIndex_t;
 static int condition__;
 
 
-typedef struct node_t
-{
-    elem_t data;
-
-    listIndex_t next;
-    listIndex_t prev;
-
-} node_t;
-
 typedef struct list_t
 {  
-    node_t* nodes;
+    elem_t* data;
+    listIndex_t* next;
+    listIndex_t* prev;
+
     listIndex_t free;
+    listIndex_t head;
+    listIndex_t tail;
     
     size_t capacity;
     size_t size;
@@ -76,5 +72,5 @@ int list_ctor(list_t* list, size_t capacity);
 int list_init_nodes(list_t* list, listIndex_t start);
 int list_dtor(list_t* list);
 int list_dump(list_t* list);
-int push_back(list_t* list, size_t value);
+int push_back(list_t* list, elem_t value);
 int pop_back(list_t* list);
