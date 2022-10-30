@@ -27,6 +27,7 @@ typedef struct list_t
     listIndex_t head;
     listIndex_t tail;
     
+    size_t size;
     size_t capacity;
 
 }list_t;
@@ -37,9 +38,9 @@ enum list_error_names
     ERR_LIST_INC_INPUT        = -8,
     ERR_LIST_OUT_MEMORY       = -7,
     ERR_LIST_BAD_SIZE         = -6,
-    ERR_LIST_UNDERFLOW        = -5,
-    ERR_LIST_OVERFLOW         = -4,
-    ERR_LIST_NEGATIVE_COUNT   = -1,
+    ERR_LIST_BAD_POSITION     = -5,
+    ERR_LIST_UNDERFLOW        = -4,
+    ERR_LIST_OVERFLOW         = -3
 };
 
 #define CHECK(condition, retval)                          \

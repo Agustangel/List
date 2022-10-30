@@ -23,11 +23,12 @@ int list_ctor(list_t* list, size_t capacity)
     list->prev[NULL_INDEX] = INDEX_POISON;
     list_init_data(list, START_INDEX);
 
+    list->size = 0;
     list->capacity = capacity;
 
     list->head = START_INDEX;
     list->tail = START_INDEX;
-    list->free = START_INDEX + 1;
+    list->free = START_INDEX;
 
     return 0;
 }
@@ -74,10 +75,11 @@ int push_back(list_t* list, elem_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    if (list->tail == list->capacity)
+    if (list->size == list->capacity)
     {
         list_resize(list);
     }
+    ++list->size;
     ++list->tail;
     
     list->data[list->tail] = value;
@@ -97,6 +99,14 @@ int push_back(list_t* list, elem_t value)
 
 //=========================================================================
 
+int insert_after(list_t* list, listIndex_t position, elem_t value)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+}
+
+//=========================================================================
+
 int pop_back(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
@@ -106,7 +116,8 @@ int pop_back(list_t* list)
     list->prev[list->tail] = FREE_INDEX;
 
     --list->tail;
-    CHECK(list->tail > 0, ERR_LIST_UNDERFLOW);
+    --list->size;
+    CHECK(list->size > 0, ERR_LIST_UNDERFLOW);
 
     return 0;
 }
