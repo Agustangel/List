@@ -21,7 +21,7 @@ int list_ctor(list_t* list, size_t capacity)
     list->data[NULL_INDEX] = DATA_POISON;
     list->next[NULL_INDEX] = INDEX_POISON;
     list->prev[NULL_INDEX] = INDEX_POISON;
-    list_init_data(list, START_INDEX);
+    list_init_data(list);
 
     list->size = 0;
     list->capacity = capacity;
@@ -35,11 +35,11 @@ int list_ctor(list_t* list, size_t capacity)
 
 //=========================================================================
 
-int list_init_data(list_t* list, listIndex_t start)
+int list_init_data(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    for(int idx = start; idx < list->capacity; ++idx)
+    for(int idx = START_INDEX; idx < list->capacity; ++idx)
     {
         list->data[idx] = DATA_POISON;
         list->next[idx] = FREE_INDEX;
@@ -75,7 +75,7 @@ int push_back(list_t* list, elem_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    if (list->size == list->capacity)
+    if (list->size + 1 == list->capacity)
     {
         list_resize(list);
     }
@@ -99,10 +99,40 @@ int push_back(list_t* list, elem_t value)
 
 //=========================================================================
 
-int insert_after(list_t* list, listIndex_t position, elem_t value)
+int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+    CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
+
+    if (list->size + 1 == list->capacity)
+    {
+        list_resize(list);
+    }
+    ++list->size;
+
+    listIndex_t position = get_physical_number(list, lognum);
     CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+
+    list->data[list->free] = value; //change list->free
+    list->prev[list->free] = position;
+    //list->next[list->free] = list->next[lognum];
+
+}
+
+//=========================================================================
+
+int get_physical_number(list_t* list, listIndex_t lognum)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+    CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
+
+    int physnum = START_INDEX;
+    for(int idx = START_INDEX; idx < lognum; ++idx)
+    {
+        physnum = list->next[physnum];
+    }
+
+    return physnum;
 }
 
 //=========================================================================

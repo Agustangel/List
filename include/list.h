@@ -70,7 +70,7 @@ enum list_error_names
 #endif
 
 int list_ctor(list_t* list, size_t capacity);
-int list_init_data(list_t* list, listIndex_t start);
+int list_init_data(list_t* list);
 int list_dtor(list_t* list);
 int list_dump(list_t* list);
 int push_back(list_t* list, elem_t value);
