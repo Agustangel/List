@@ -150,8 +150,30 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     list->next[list->prev[list->free]] = list->free;
 
     list->free = -list->next[list->free];
-    
+
     return 0;   
+}
+
+//=========================================================================
+
+int delete_elem(list_t* list, listIndex_t lognum)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+    CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
+
+    CHECK(list->size > 0, ERR_LIST_UNDERFLOW);
+    --list->size;
+
+    listIndex_t position = get_physical_number(list, lognum);
+    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+
+    list->prev[list->next[position]] = list->prev[position];
+    list->next[list->prev[position]] = list->next[position];
+
+    list->next[position] = FREE_INDEX;
+    list->prev[position] = FREE_INDEX;
+    
+    return 0; 
 }
 
 //=========================================================================
