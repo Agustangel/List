@@ -82,6 +82,16 @@ int push_back(list_t* list, elem_t value)
 
 //=========================================================================
 
+int pop_back(list_t* list)
+{
+    delete_elem(list, list->tail);
+    --list->tail;
+
+    return 0;
+}
+
+//=========================================================================
+
 int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
@@ -172,23 +182,6 @@ int get_physical_number(list_t* list, listIndex_t lognum)
     }
 
     return physnum;
-}
-
-//=========================================================================
-
-int pop_back(list_t* list)
-{
-    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
-
-    list->data[list->tail] = DATA_POISON;
-    list->next[list->tail] = FREE_INDEX;
-    list->prev[list->tail] = FREE_INDEX;
-
-    --list->tail;
-    --list->size;
-    CHECK(list->size > 0, ERR_LIST_UNDERFLOW);
-
-    return 0;
 }
 
 //=========================================================================
