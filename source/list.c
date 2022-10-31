@@ -31,7 +31,7 @@ int list_ctor(list_t* list, size_t capacity)
     list->tail = START_INDEX;
     list->free = START_INDEX;
 
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
@@ -47,7 +47,7 @@ int list_init_data(list_t* list)
         list->prev[idx] = FREE_INDEX;
     }
 
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
@@ -67,7 +67,7 @@ int list_dtor(list_t* list)
     list->capacity = SIZE_MAX;
     list->free = NULL_INDEX;
     
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
@@ -77,7 +77,7 @@ int push_back(list_t* list, elem_t value)
     insert_after(list, list->tail, value);
     ++list->tail;
 
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
@@ -87,7 +87,7 @@ int pop_back(list_t* list)
     delete_elem(list, list->tail);
     --list->tail;
 
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
@@ -115,7 +115,7 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 
     list->free = -list->next[list->free];          // next[free]; free elems in array next are negative
 
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
@@ -143,7 +143,7 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
 
     list->free = -list->next[list->free];
 
-    return 0;   
+    return LIST_SUCCESS;   
 }
 
 //=========================================================================
@@ -165,7 +165,7 @@ int delete_elem(list_t* list, listIndex_t lognum)
     list->next[position] = FREE_INDEX;
     list->prev[position] = FREE_INDEX;
     
-    return 0; 
+    return LIST_SUCCESS; 
 }
 
 //=========================================================================
@@ -212,7 +212,19 @@ int list_resize(list_t* list)
         list->prev[i] = FREE_INDEX;
     }
 
-    return 0;
+    return LIST_SUCCESS;
+}
+
+//=========================================================================
+
+int list_veryfi(list_t* list)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+
+    if((list->data == NULL) || (list->next == NULL) || (list->prev == NULL))
+    {
+
+    }
 }
 
 //=========================================================================
@@ -251,7 +263,7 @@ int list_dump(list_t* list)
     }
     printf("\n");
 
-    return 0;
+    return LIST_SUCCESS;
 }
 
 //=========================================================================

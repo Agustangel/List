@@ -32,15 +32,16 @@ typedef struct list_t
 
 }list_t;
 
-enum list_error_names
+enum list_codes
 {
-    ERR_LIST_NULL_PTR         = -9,
-    ERR_LIST_INC_INPUT        = -8,
-    ERR_LIST_OUT_MEMORY       = -7,
-    ERR_LIST_BAD_SIZE         = -6,
-    ERR_LIST_BAD_POSITION     = -5,
-    ERR_LIST_UNDERFLOW        = -4,
-    ERR_LIST_OVERFLOW         = -3
+    LIST_SUCCESS              = 0,
+    ERR_LIST_NULL_PTR         = 1,
+    ERR_LIST_INC_INPUT        = 2,
+    ERR_LIST_OUT_MEMORY       = 3,
+    ERR_LIST_BAD_SIZE         = 4,
+    ERR_LIST_BAD_POSITION     = 5,
+    ERR_LIST_UNDERFLOW        = 6,
+    ERR_LIST_OVERFLOW         = 7,
 };
 
 #define CHECK(condition, retval)                          \
