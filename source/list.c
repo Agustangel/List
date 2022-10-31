@@ -259,7 +259,59 @@ int list_dump(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
+    if(list->status != 0)
+    {
+        int error_tmp = 0;
+        for(int error_idx = 1; error_idx < ERROR_NUMBER + 1; ++error_idx)
+        {
+            error_tmp = list->status;
+            error_tmp &= 1 << error_idx;
+    
+            switch (error_tmp)
+            {
+            case (1 << ERR_LIST_NULL_PTR):
+                STACK_ERROR(ERR_LIST_NULL_PTR);
+                break;
+
+            case (1 << ERR_LIST_BAD_PTR):
+                STACK_ERROR(ERR_LIST_BAD_PTR);
+                break;
+
+            case (1 << ERR_LIST_OUT_MEMORY):
+                STACK_ERROR(ERR_LIST_OUT_MEMORY);
+                break;
+
+            case (1 << ERR_LIST_BAD_SIZE):
+                STACK_ERROR(ERR_LIST_BAD_SIZE);
+                break;
+
+            case (1 << ERR_LIST_BAD_POSITION):
+                STACK_ERROR(ERR_LIST_BAD_POSITION);
+                break;
+
+            case (1 << ERR_LIST_UNDERFLOW):
+                STACK_ERROR(ERR_LIST_UNDERFLOW);
+                break;
+
+            case (1 << ERR_LIST_OVERFLOW):
+                STACK_ERROR(ERR_LIST_OVERFLOW);
+                break;
+
+            case (1 << ERR_LIST_INC_LIST):
+                STACK_ERROR(ERR_LIST_INC_LIST);
+                break;
+            
+            default:
+                break;
+            };
+        }
+    }
+    printf("\n");
+    printf("-----------------------------------------------------------\n");
+    printf("\n");
+
     printf("capacity = %zu\n", list->capacity);
+    printf("size = %zu\n", list->size);
 
     printf("indx: ");
     for(int idx = 0; idx < list->capacity + 1; ++idx)

@@ -10,6 +10,7 @@
 #define START_INDEX 1
 #define DATA_POISON NAN
 #define NULL_INDEX 0
+#define ERROR_NUMBER 8
 
 typedef double elem_t;
 typedef size_t listIndex_t;
