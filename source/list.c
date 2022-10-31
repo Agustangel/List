@@ -5,7 +5,6 @@
 #include "list.h"
 
 
-// #TODO change array free; add negative number in array next for them
 //=========================================================================
 int list_ctor(list_t* list, size_t capacity)
 {
@@ -20,6 +19,9 @@ int list_ctor(list_t* list, size_t capacity)
     CHECK(list->next !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(list->prev !=  NULL, ERR_LIST_NULL_PTR);
 
+    list->size = 0;
+    list->capacity = capacity;
+
     list->data[NULL_INDEX] = DATA_POISON;
     list->next[NULL_INDEX] = INDEX_POISON;
     list->prev[NULL_INDEX] = INDEX_POISON;
@@ -29,9 +31,14 @@ int list_ctor(list_t* list, size_t capacity)
     list->tail = START_INDEX;
     list->free = START_INDEX;
 
-    list->size = 0;
-    list->capacity = capacity;
     list->status = LIST_SUCCESS;
+
+    printf("next: ");
+    for(int idx = 0; idx < list->capacity + 1; ++idx)
+    {
+        printf("%5d ", list->next[idx]);
+    }
+    printf("\n");
 
     return LIST_SUCCESS;
 }
@@ -42,10 +49,10 @@ int list_init_data(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    for(int idx = START_INDEX; idx < list->capacity; ++idx)
+    for(int idx = START_INDEX; idx < list->capacity + 2; ++idx)
     {
         list->data[idx] = DATA_POISON;
-        list->next[idx] = -(START_INDEX + idx);
+        list->next[idx] = START_INDEX + idx;
         list->prev[idx] = FREE_INDEX;
     }
 
@@ -76,6 +83,7 @@ int list_dtor(list_t* list)
 
 int push_back(list_t* list, elem_t value)
 {
+    printf("list->tail = %d\n", list->tail);
     insert_after(list, list->tail, value);
     ++list->tail;
 
@@ -106,16 +114,18 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
     ++list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
+    printf("position = %d, lognum = %d\n", position, lognum);
     CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
-    list->data[list->free] = value;
-    list->prev[list->free] = position;              // position -> free
-    list->next[list->free] = list->next[position];  // free -> next[position]
+    listIndex_t free = list->free;                  //free save
+    list->free = list->next[list->free];            //free up
 
-    list->next[position] = list->free;
-    list->prev[list->next[list->free]] = list->free;
+    list->data[free] = value;
+    list->prev[free] = position;              // position -> free
+    list->next[free] = list->next[position];  // free -> next[position]
 
-    list->free = -list->next[list->free];          // next[free]; free elems in array next are negative
+    list->next[position] = free;
+    list->prev[list->next[list->free]] = free;
 
     return LIST_SUCCESS;
 }
@@ -136,14 +146,15 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     listIndex_t position = get_physical_number(list, lognum);
     CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
-    list->data[list->free] = value;
-    list->next[list->free] = position;
-    list->prev[list->free] = list->prev[position];
+    listIndex_t free = list->free;                  //free save
+    list->free = list->next[list->free];            //free up
 
-    list->prev[position] = list->free;
-    list->next[list->prev[list->free]] = list->free;
+    list->data[free] = value;
+    list->next[free] = position;
+    list->prev[free] = list->prev[position];
 
-    list->free = -list->next[list->free];
+    list->prev[position] = free;
+    list->next[list->prev[list->free]] = free;
 
     return LIST_SUCCESS;   
 }
@@ -181,6 +192,7 @@ int get_physical_number(list_t* list, listIndex_t lognum)
     for(int idx = START_INDEX; idx < lognum; ++idx)
     {
         physnum = list->next[physnum];
+        printf("physnum = %d\n", physnum);
     }
 
     return physnum;
@@ -210,7 +222,7 @@ int list_resize(list_t* list)
     for(long long i = list->capacity / 2; i < list->capacity; i++)
     {
         list->data[i] = DATA_POISON;
-        list->next[i] = FREE_INDEX;
+        list->next[i] = i + 1;
         list->prev[i] = FREE_INDEX;
     }
 
@@ -304,7 +316,12 @@ int list_dump(list_t* list)
 
     printf("capacity = %zu\n", list->capacity);
     printf("size = %zu\n", list->size);
+    printf("\n");
 
+    printf("head = %d\n", list->head);
+    printf("tail = %d\n", list->tail);
+
+    printf("-----------------------------------------------------------\n");
     printf("indx: ");
     for(int idx = 0; idx < list->capacity + 1; ++idx)
     {
@@ -322,18 +339,16 @@ int list_dump(list_t* list)
     printf("next: ");
     for(int idx = 0; idx < list->capacity + 1; ++idx)
     {
-        printf("%5zu ", list->next[idx]);
+        printf("%5d ", list->next[idx]);
     }
     printf("\n");
 
     printf("prev: ");
     for(int idx = 0; idx < list->capacity + 1; ++idx)
     {
-        printf("%5zu ", list->prev[idx]);
+        printf("%5d ", list->prev[idx]);
     }
     printf("\n");
 
     return LIST_SUCCESS;
 }
-
-//=========================================================================

@@ -7,14 +7,18 @@
 
 int main()
 {
-    list_t* list;
+    list_t list;
     size_t capacity = 0;
     scanf("%zu", &capacity);
 
-    list_ctor(list, capacity);
-    push_back(list, 5);
-    list_dump(list);
-    list_dtor(list);
+    list_ctor(&list, capacity);
+
+    push_back(&list, 5);
+    push_back(&list, 1);
+    push_back(&list, 3);
+
+    list_dump(&list);
+    //list_dtor(&list);
 
     return 0;
 }
