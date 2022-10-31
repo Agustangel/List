@@ -13,6 +13,7 @@
 
 typedef double elem_t;
 typedef size_t listIndex_t;
+typedef uint_fast16_t listStatus_t;
 
 static int condition__;
 
@@ -30,18 +31,21 @@ typedef struct list_t
     size_t size;
     size_t capacity;
 
+    listStatus_t status;
+    
 }list_t;
 
 enum list_codes
 {
     LIST_SUCCESS              = 0,
     ERR_LIST_NULL_PTR         = 1,
-    ERR_LIST_INC_INPUT        = 2,
+    ERR_LIST_BAD_PTR          = 2,
     ERR_LIST_OUT_MEMORY       = 3,
     ERR_LIST_BAD_SIZE         = 4,
     ERR_LIST_BAD_POSITION     = 5,
     ERR_LIST_UNDERFLOW        = 6,
     ERR_LIST_OVERFLOW         = 7,
+    ERR_LIST_INC_LIST         = 8
 };
 
 #define CHECK(condition, retval)                          \
@@ -80,3 +84,5 @@ int list_resize(list_t* list);
 int insert_after(list_t* list, listIndex_t lognum, elem_t value);
 int insert_before(list_t* list, listIndex_t lognum, elem_t value);
 int get_physical_number(list_t* list, listIndex_t lognum);
+int delete_elem(list_t* list, listIndex_t lognum);
+int list_veryfi(list_t* list);

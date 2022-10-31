@@ -24,12 +24,13 @@ int list_ctor(list_t* list, size_t capacity)
     list->prev[NULL_INDEX] = INDEX_POISON;
     list_init_data(list);
 
-    list->size = 0;
-    list->capacity = capacity;
-
     list->head = START_INDEX;
     list->tail = START_INDEX;
     list->free = START_INDEX;
+
+    list->size = 0;
+    list->capacity = capacity;
+    list->status = LIST_SUCCESS;
 
     return LIST_SUCCESS;
 }
@@ -223,8 +224,33 @@ int list_veryfi(list_t* list)
 
     if((list->data == NULL) || (list->next == NULL) || (list->prev == NULL))
     {
-
+        list->status |= 1 << ERR_LIST_NULL_PTR;
     }
+
+    if(list->size > list->capacity)
+    {
+        list->status |= 1 << ERR_LIST_OVERFLOW;
+    }
+    if((list->size < 0) || (list->capacity < 0))
+    {
+        list->status |= 1 << ERR_LIST_BAD_SIZE;
+    }
+
+    if((list == (list_t*) list->data) || (list == (list_t*) list->next) || (list == (list_t*) list->prev))
+    {
+        list->status |= 1 << ERR_LIST_BAD_PTR;
+    }
+
+    if(list->head > list->tail)
+    {
+        list->status |= 1 << ERR_LIST_INC_LIST;
+    }
+    if((list->head < 0) || (list->tail < 0))
+    {
+        list->status |= 1 << ERR_LIST_BAD_POSITION;
+    }
+
+    return LIST_SUCCESS;
 }
 
 //=========================================================================
