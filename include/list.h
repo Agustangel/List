@@ -5,6 +5,18 @@
 #include <stdint.h>
 
 
+/*! enumeration colors and their corresponding ANSI values. */
+#define BLACK "\033[0;30m"
+#define BLUE "\033[0;34m"
+#define GREEN "\033[0;32m"
+#define CYAN "\033[0;36m"
+#define RED "\033[0;31m"
+#define PURPLE "\033[0;35m"
+#define BROWN "\033[0;33m"
+#define YELLOW "\e[0;33m"
+#define RESET "\033[0m"
+
+
 #define FREE_INDEX -1
 #define INDEX_POISON -3
 #define START_INDEX 1
@@ -17,6 +29,7 @@ typedef size_t listIndex_t;
 typedef uint_fast16_t listStatus_t;
 
 static int condition__;
+static int ret_;
 
 
 typedef struct list_t
@@ -87,7 +100,7 @@ enum list_codes
 /*! macros to describe the error. */
 #define LIST_OK(list)                                                               \
                                                                                     \
-    ret_ = stack_verify(list);                                                      \
+    ret_ = list_veryfi(list);                                                       \
                                                                                     \
     switch (ret_)                                                                   \
     {                                                                               \

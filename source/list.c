@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "list.h"
 
@@ -44,7 +45,7 @@ int list_init_data(list_t* list)
     for(int idx = START_INDEX; idx < list->capacity; ++idx)
     {
         list->data[idx] = DATA_POISON;
-        list->next[idx] = FREE_INDEX;
+        list->next[idx] = -(START_INDEX + idx);
         list->prev[idx] = FREE_INDEX;
     }
 
@@ -221,34 +222,25 @@ int list_resize(list_t* list)
 int list_veryfi(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+    bool value = 0;
 
-    if((list->data == NULL) || (list->next == NULL) || (list->prev == NULL))
-    {
-        list->status |= 1 << ERR_LIST_NULL_PTR;
-    }
+    value = (list->data == NULL) || (list->next == NULL) || (list->prev == NULL);
+    list->status |= value << ERR_LIST_NULL_PTR;
 
-    if(list->size > list->capacity)
-    {
-        list->status |= 1 << ERR_LIST_OVERFLOW;
-    }
-    if((list->size < 0) || (list->capacity < 0))
-    {
-        list->status |= 1 << ERR_LIST_BAD_SIZE;
-    }
+    value = (list->size > list->capacity);
+    list->status |= value << ERR_LIST_OVERFLOW;
 
-    if((list == (list_t*) list->data) || (list == (list_t*) list->next) || (list == (list_t*) list->prev))
-    {
-        list->status |= 1 << ERR_LIST_BAD_PTR;
-    }
+    value = (list->size < 0) || (list->capacity < 0);
+    list->status |= value << ERR_LIST_BAD_SIZE;
 
-    if(list->head > list->tail)
-    {
-        list->status |= 1 << ERR_LIST_INC_LIST;
-    }
-    if((list->head < 0) || (list->tail < 0))
-    {
-        list->status |= 1 << ERR_LIST_BAD_POSITION;
-    }
+    value = (list == (list_t*) list->data) || (list == (list_t*) list->next) || (list == (list_t*) list->prev);
+    list->status |= value << ERR_LIST_BAD_PTR;
+
+    value = (list->head > list->tail);
+    list->status |= value << ERR_LIST_INC_LIST;
+
+    value = (list->head < 0) || (list->tail < 0);
+    list->status |= value << ERR_LIST_BAD_POSITION;
 
     return LIST_SUCCESS;
 }
@@ -270,35 +262,35 @@ int list_dump(list_t* list)
             switch (error_tmp)
             {
             case (1 << ERR_LIST_NULL_PTR):
-                STACK_ERROR(ERR_LIST_NULL_PTR);
+                LIST_ERROR(ERR_LIST_NULL_PTR);
                 break;
 
             case (1 << ERR_LIST_BAD_PTR):
-                STACK_ERROR(ERR_LIST_BAD_PTR);
+                LIST_ERROR(ERR_LIST_BAD_PTR);
                 break;
 
             case (1 << ERR_LIST_OUT_MEMORY):
-                STACK_ERROR(ERR_LIST_OUT_MEMORY);
+                LIST_ERROR(ERR_LIST_OUT_MEMORY);
                 break;
 
             case (1 << ERR_LIST_BAD_SIZE):
-                STACK_ERROR(ERR_LIST_BAD_SIZE);
+                LIST_ERROR(ERR_LIST_BAD_SIZE);
                 break;
 
             case (1 << ERR_LIST_BAD_POSITION):
-                STACK_ERROR(ERR_LIST_BAD_POSITION);
+                LIST_ERROR(ERR_LIST_BAD_POSITION);
                 break;
 
             case (1 << ERR_LIST_UNDERFLOW):
-                STACK_ERROR(ERR_LIST_UNDERFLOW);
+                LIST_ERROR(ERR_LIST_UNDERFLOW);
                 break;
 
             case (1 << ERR_LIST_OVERFLOW):
-                STACK_ERROR(ERR_LIST_OVERFLOW);
+                LIST_ERROR(ERR_LIST_OVERFLOW);
                 break;
 
             case (1 << ERR_LIST_INC_LIST):
-                STACK_ERROR(ERR_LIST_INC_LIST);
+                LIST_ERROR(ERR_LIST_INC_LIST);
                 break;
             
             default:
