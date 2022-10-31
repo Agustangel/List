@@ -76,3 +76,6 @@ int list_dump(list_t* list);
 int push_back(list_t* list, elem_t value);
 int pop_back(list_t* list);
 int list_resize(list_t* list);
+int insert_after(list_t* list, listIndex_t lognum, elem_t value);
+int insert_before(list_t* list, listIndex_t lognum, elem_t value);
+int get_physical_number(list_t* list, listIndex_t lognum);

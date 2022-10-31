@@ -128,6 +128,34 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 
 //=========================================================================
 
+int insert_before(list_t* list, listIndex_t lognum, elem_t value)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+    CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
+
+    if (list->size + 1 == list->capacity)
+    {
+        list_resize(list);
+    }
+    ++list->size;
+
+    listIndex_t position = get_physical_number(list, lognum);
+    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+
+    list->data[list->free] = value;
+    list->next[list->free] = position;
+    list->prev[list->free] = list->prev[position];
+
+    list->prev[position] = list->free;
+    list->next[list->prev[list->free]] = list->free;
+
+    list->free = -list->next[list->free];
+    
+    return 0;   
+}
+
+//=========================================================================
+
 int get_physical_number(list_t* list, listIndex_t lognum)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
