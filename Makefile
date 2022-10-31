@@ -10,3 +10,7 @@ main.o: main.c
 
 list.o: ${SOURCE}/list.c
 	gcc -g -O0 -I${INCLUDES}/ -c $^
+
+clean:
+	rm list main.o list.o
+	
