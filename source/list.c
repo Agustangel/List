@@ -74,26 +74,8 @@ int list_dtor(list_t* list)
 
 int push_back(list_t* list, elem_t value)
 {
-    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
-
-    if (list->size + 1 == list->capacity)
-    {
-        list_resize(list);
-    }
-    ++list->size;
+    insert_after(list, list->tail, value);
     ++list->tail;
-    
-    list->data[list->tail] = value;
-    list->next[list->tail] = FREE_INDEX;
-
-    for(listIndex_t idx = list->head; idx < list->tail; ++idx)
-    {
-        if((list->next[idx] == FREE_INDEX) && (list->prev[idx] != FREE_INDEX))
-        {
-            list->next[idx] = list->tail; // physical number of tail
-            list->prev[list->tail] = idx; 
-        }
-    }
 
     return 0;
 }
