@@ -39,6 +39,7 @@ typedef struct list_t
     listIndex_t* prev;
 
     listIndex_t free;
+    listIndex_t end;
     listIndex_t head;
     listIndex_t tail;
     

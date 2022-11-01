@@ -4,7 +4,7 @@
 
 #include "list.h"
 
-
+// TODO destroy the loop with realising field end in list
 //=========================================================================
 int list_ctor(list_t* list, size_t capacity)
 {
@@ -121,10 +121,10 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
     
     list->data[free] = value;
     list->prev[free] = position;                       // position -> free
-    
+
     if(position == list->tail)
     {
-        list->next[free] = list->free; // taking into account POISON index
+        list->next[free] = list->free;
         return LIST_SUCCESS;
     }
     list->next[free] = list->next[position];            // free -> next[position]
@@ -165,7 +165,7 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
 }
 
 //=========================================================================
-
+// TODO update list->free
 int delete_elem(list_t* list, listIndex_t lognum)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
@@ -201,7 +201,7 @@ int get_physical_number(list_t* list, listIndex_t lognum)
 
     for(int idx = START_INDEX; idx < lognum; ++idx)
     {
-        physnum = list->next[physnum];
+        physnum = abs(list->next[physnum]);
         printf("physnum = %d\n", physnum);
     }
 
@@ -362,3 +362,272 @@ int list_dump(list_t* list)
 
     return LIST_SUCCESS;
 }
+
+//=========================================================================
+
+// void graph_dump(list_t* list)
+// {
+//     Null_check(list);
+
+//     FILE* text = fopen("graph_log.dot", "w");
+
+//     fprintf(text, "digraph G {\n"            
+//                   "rankdir = RL;\n");
+
+//     fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = dodgerblue4, fillcolor = mediumaquamarine]\n", 
+//                     0, (list->data)[0].value, (list->data)[0].prev, 0, (list->data)[0].next);
+
+   
+//     for (size_t index = 1; index <= list->capacity; ++index)
+//     {   
+//         if ((!isnan((list->data)[index].value)) && ((list->data)[index].next != -1) && ((list->data)[index].prev != -1))
+//         {
+//            fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = deepskyblue2, fillcolor = lightskyblue]\n", 
+//                     index, (list->data)[index].value, (list->data)[index].prev, index, (list->data)[index].next);
+//         }
+
+//         else if (((isnan((list->data)[index].value)) && ((list->data)[index].next != -1) && ((list->data)[index].prev == -1)))
+//         {
+//              fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = darkgreen, fillcolor = lightgreen]\n", 
+//                     index, (list->data)[index].value, (list->data)[index].prev, index, (list->data)[index].next);
+//         }
+
+//         else
+//         {
+//             fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = red,  fillcolor = lightcoral]\n", 
+//                     index, (list->data)[index].value, (list->data)[index].prev, index, (list->data)[index].next);
+//         }
+//     }
+    
+//     fprintf(text, "\t%ld -> %ld [color = dodgerblue4]; \n", 0, (list->data)[0].next);
+//     fprintf(text, "\t%ld -> %ld [color = dodgerblue4]; \n", 0, (list->data)[0].prev);
+
+//     for (size_t i = 1; i <= list->capacity; ++i)
+//     {   
+//         if ((isnan((list->data)[i].value)) && (isnan((list->data)[(list->data)[i].next].value)) && \
+//             ((list->data)[i].prev == -1)   && (((list->data)[(list->data)[i].next].prev == -1) || ((list->data)[(list->data)[i].next].prev == 0)))
+//         {
+//             fprintf(text, "\t%ld -> %ld [color = darkgreen]; \n", i, (list->data)[i].next);
+//         }
+        
+//         else if (!isnan((list->data)[i].value))
+//         {
+//             if ((!isnan((list->data)[(list->data)[i].next].value)) && ((list->data)[(list->data)[i].next].prev == i))
+//             {
+//                 fprintf(text, "\t%ld -> %ld [color = deepskyblue2]; \n", i, (list->data)[i].next);
+//                 fprintf(text, "\t%ld -> %ld [color = deepskyblue2]; \n", (list->data)[i].next, i);
+//             }
+
+//             else if  (((list->data)[i].next == 0) && (i == list->tail))
+//             {
+//                 fprintf(text, "\t%ld -> %ld [color = deepskyblue2]; \n", i, (list->data)[i].next);
+//                 fprintf(text, "\t%ld -> %ld [color = deepskyblue2]; \n", (list->data)[i].next, i);
+//             }
+
+//             else 
+//             {
+//                 fprintf(text, "\t%ld -> %ld [color = darkred]; \n", i, (list->data)[i].next);
+//                 fprintf(text, "\t%ld -> %ld [color = darkred]; \n", (list->data)[i].next, i);
+//             }
+//         }
+
+//         else 
+//         {
+//             fprintf(text, "\t%ld -> %ld [color = darkred]; \n", i, (list->data)[i].next);
+//             fprintf(text, "\t%ld -> %ld [color = darkred]; \n", (list->data)[i].next, i);
+//         }
+//     }
+
+//     fprintf(text, "\tHEAD [style = filled, color = black, fillcolor = salmon1]; \n");
+//     fprintf(text, "\tTAIL [style = filled, color = black, fillcolor = salmon1]; \n");
+//     fprintf(text, "\tFREE [style = filled, color = black, fillcolor = salmon1]; \n");
+
+//     fprintf(text, "\tHEAD -> %ld [color = deeppink]; \n", list->head);
+//     fprintf(text, "\tTAIL -> %ld [color = deeppink]; \n", list->tail);
+//     fprintf(text, "\tFREE -> %ld [color = deeppink]; \n", list->first_free);
+
+//     fprintf(text, "}\n");
+
+//     fclose(text);
+
+//     system("dot -Tjpeg -ograph_log.jpeg graph_log.dot");
+
+//     text = fopen("graph_phys.dot", "w");
+
+//     fprintf(text, "digraph G {\n");
+
+//     fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = dodgerblue4, fillcolor = mediumaquamarine]\n", 
+//                     0, (list->data)[0].value, (list->data)[0].prev, 0, (list->data)[0].next);
+
+   
+//     for (size_t index = 1; index <= list->capacity; ++index)
+//     {   
+//         if ((!isnan((list->data)[index].value)) && ((list->data)[index].next != -1) && ((list->data)[index].prev != -1))
+//         {
+//            fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = deepskyblue2, fillcolor = lightskyblue]\n", 
+//                     index, (list->data)[index].value, (list->data)[index].prev, index, (list->data)[index].next);
+//         }
+
+//         else if (((isnan((list->data)[index].value)) && ((list->data)[index].next != -1) && ((list->data)[index].prev == -1)))
+//         {
+//              fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = darkgreen, fillcolor = lightgreen]\n", 
+//                     index, (list->data)[index].value, (list->data)[index].prev, index, (list->data)[index].next);
+//         }
+
+//         else
+//         {
+//             fprintf(text, "\t%lu [shape = plaintext, label =<\n"
+//                           "\t<table>\n"
+//                           "\t<tr>\n" 
+//                           "\t\t<td colspan=\"3\"> %lg </td>\n"
+//                           "\t </tr>\n"
+//                           "\t <tr>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t\t <td> %ld </td>\n"
+//                           "\t </tr>\n"
+//                           "\t</table>>, style = filled, color = red,  fillcolor = lightcoral]\n", 
+//                     index, (list->data)[index].value, (list->data)[index].prev, index, (list->data)[index].next);
+//         }
+//     }
+    
+//     fprintf(text, "\t{ rank = same; ");
+
+//     for (size_t index = 0; index <= list->capacity; ++index)
+//     {
+//         fprintf(text, " %ld", index);
+//     }
+
+//     fprintf(text, " }\n");
+
+//     for (size_t index = 0; index < list->capacity; ++index)
+//     {
+//         fprintf(text, " %ld ->", index);
+//     }
+
+//     fprintf(text, "%ld [style = invis]; \n");
+
+//     fprintf(text, "\t%ld -> %ld [color = dodgerblue4]; \n", 0, (list->data)[0].next);
+//     fprintf(text, "\t%ld -> %ld [color = dodgerblue4]; \n", 0, (list->data)[0].prev);
+
+//     for (size_t i = 1; i <= list->capacity; ++i)
+//     {   
+//         if ((isnan((list->data)[i].value)) && (isnan((list->data)[(list->data)[i].next].value)) && \
+//             ((list->data)[i].prev == -1)   && (((list->data)[(list->data)[i].next].prev == -1) || ((list->data)[(list->data)[i].next].prev == 0)))
+//         {
+//             fprintf(text, "\t%ld -> %ld [color = darkgreen]; \n", i, (list->data)[i].next);
+//         }
+        
+//         else if (!isnan((list->data)[i].value))
+//         {
+//             if ((!isnan((list->data)[(list->data)[i].next].value)) && ((list->data)[(list->data)[i].next].prev == i))
+//             {
+//                 fprintf(text, "\t%ld -> %ld [color = deepskyblue2, dir = both]; \n", i, (list->data)[i].next);
+//             }
+
+//             else if  (((list->data)[i].next == 0) && (i == list->tail))
+//             {
+//                 fprintf(text, "\t%ld -> %ld [color = deepskyblue2, dir = both]; \n", i, (list->data)[i].next);
+//             }
+
+//             else 
+//             {
+//                 fprintf(text, "\t%ld -> %ld [color = darkred]; \n", i, (list->data)[i].next);
+//                 fprintf(text, "\t%ld -> %ld [color = darkred]; \n", (list->data)[i].next, i);
+//             }
+//         }
+
+//         else 
+//         {
+//             fprintf(text, "\t%ld -> %ld [color = darkred]; \n", i, (list->data)[i].next);
+//             fprintf(text, "\t%ld -> %ld [color = darkred]; \n", (list->data)[i].next, i);
+//         }
+//     }
+
+//     fprintf(text, "\tHEAD [style = filled, color = black, fillcolor = salmon1]; \n");
+//     fprintf(text, "\tTAIL [style = filled, color = black, fillcolor = salmon1]; \n");
+//     fprintf(text, "\tFREE [style = filled, color = black, fillcolor = salmon1]; \n");
+
+//     fprintf(text, "\tHEAD -> %ld [color = deeppink]; \n", list->head);
+//     fprintf(text, "\tTAIL -> %ld [color = deeppink]; \n", list->tail);
+//     fprintf(text, "\tFREE -> %ld [color = deeppink]; \n", list->first_free);
+
+//     fprintf(text, "}\n");
+
+//     fclose(text);
+
+//     system("dot -Tjpeg -ograph_phys.jpeg graph_phys.dot");
+
+//     system("convert graph_log.jpeg graph_phys.jpeg -append graph_array.jpeg");
+//     system("gwenview graph_array.jpeg");
+// }
