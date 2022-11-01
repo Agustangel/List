@@ -28,7 +28,7 @@ int list_ctor(list_t* list, size_t capacity)
     list_init_data(list);
 
     list->head = START_INDEX;
-    list->tail = START_INDEX;
+    list->tail = NULL_INDEX;
     list->free = START_INDEX;
 
     list->status = LIST_SUCCESS;
@@ -83,7 +83,6 @@ int list_dtor(list_t* list)
 
 int push_back(list_t* list, elem_t value)
 {
-    printf("list->tail = %d\n", list->tail);
     insert_after(list, list->tail, value);
     ++list->tail;
 
@@ -105,7 +104,7 @@ int pop_back(list_t* list)
 int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
-    CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
+    CHECK(lognum >= 0, ERR_LIST_BAD_POSITION);
 
     if (list->size + 1 == list->capacity)
     {
@@ -115,17 +114,23 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 
     listIndex_t position = get_physical_number(list, lognum);
     printf("position = %d, lognum = %d\n", position, lognum);
-    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
-    listIndex_t free = list->free;                  //free save
-    list->free = list->next[list->free];            //free up
-
+    listIndex_t free = list->free;                     // free save
+    list->free = list->next[list->free];               // free up
+    
     list->data[free] = value;
-    list->prev[free] = position;              // position -> free
-    list->next[free] = list->next[position];  // free -> next[position]
+    list->prev[free] = position;                       // position -> free
+    
+    if(position == list->tail)
+    {
+        list->next[free] = list->free; // taking into account POISON index
+        return LIST_SUCCESS;
+    }
+    list->next[free] = list->next[position];            // free -> next[position]
 
     list->next[position] = free;
-    list->prev[list->next[list->free]] = free;
+    list->prev[list->next[free]] = free;
 
     return LIST_SUCCESS;
 }
@@ -146,8 +151,8 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     listIndex_t position = get_physical_number(list, lognum);
     CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
-    listIndex_t free = list->free;                  //free save
-    list->free = list->next[list->free];            //free up
+    listIndex_t free = list->free;
+    list->free = list->next[list->free];
 
     list->data[free] = value;
     list->next[free] = position;
@@ -186,9 +191,14 @@ int delete_elem(list_t* list, listIndex_t lognum)
 int get_physical_number(list_t* list, listIndex_t lognum)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
-    CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
+    CHECK(lognum >= 0, ERR_LIST_BAD_POSITION);
 
-    int physnum = START_INDEX;
+    int physnum = 0;
+    if(lognum != 0)
+    {
+        physnum = START_INDEX;
+    }
+
     for(int idx = START_INDEX; idx < lognum; ++idx)
     {
         physnum = list->next[physnum];
