@@ -17,6 +17,7 @@ int main()
     push_back(&list, 1);
     push_back(&list, 3);
     insert_after(&list, 1, 7);
+    push_back(&list, 6);
     //push_back(&list, 8);
 
     list_dump(&list);

@@ -30,6 +30,7 @@ int list_ctor(list_t* list, size_t capacity)
     list->head = START_INDEX;
     list->tail = NULL_INDEX;
     list->free = START_INDEX;
+    list->end  = NULL_INDEX;
 
     list->status = LIST_SUCCESS;
 
@@ -124,13 +125,20 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
 
     if(position == list->tail)
     {
-        list->next[free] = list->free;
+        if(list->end != NULL_INDEX)
+        {
+            list->next[list->end] = free;
+        }
+        list->end = free;
+        list->next[free] = -1;
+        
         return LIST_SUCCESS;
     }
     list->next[free] = list->next[position];            // free -> next[position]
 
     list->next[position] = free;
     list->prev[list->next[free]] = free;
+    ++list->tail;
 
     return LIST_SUCCESS;
 }
@@ -202,7 +210,7 @@ int get_physical_number(list_t* list, listIndex_t lognum)
     for(int idx = START_INDEX; idx < lognum; ++idx)
     {
         physnum = abs(list->next[physnum]);
-        printf("physnum = %d\n", physnum);
+        //printf("physnum = %d\n", physnum);
     }
 
     return physnum;
