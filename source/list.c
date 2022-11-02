@@ -75,7 +75,12 @@ int list_dtor(list_t* list)
     list->prev = NULL;
 
     list->capacity = SIZE_MAX;
+    list->size = SIZE_MAX;
+
     list->free = NULL_INDEX;
+    list->end  = INDEX_POISON;
+    list->head = INDEX_POISON;
+    list->tail = INDEX_POISON;
     
     return LIST_SUCCESS;
 }
