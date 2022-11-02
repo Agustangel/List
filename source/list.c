@@ -157,7 +157,7 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     ++list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
-    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
     listIndex_t free = list->free;
     list->free = list->next[list->free];
@@ -188,7 +188,8 @@ int delete_elem(list_t* list, listIndex_t lognum)
     list->prev[list->next[position]] = list->prev[position];
     list->next[list->prev[position]] = list->next[position];
 
-    list->next[position] = FREE_INDEX;
+    list->data[position] = DATA_POISON;
+    list->next[position] = list->free; // ? сделать так: list->free = position;
     list->prev[position] = FREE_INDEX;
     
     return LIST_SUCCESS; 
@@ -210,7 +211,6 @@ int get_physical_number(list_t* list, listIndex_t lognum)
     for(int idx = START_INDEX; idx < lognum; ++idx)
     {
         physnum = abs(list->next[physnum]);
-        //printf("physnum = %d\n", physnum);
     }
 
     return physnum;
