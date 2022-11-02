@@ -15,10 +15,11 @@ int main()
 
     push_back(&list, 5);
     push_back(&list, 1);
-    push_back(&list, 3);
+    //push_back(&list, 3);
     insert_after(&list, 1, 7);
     push_back(&list, 6);
-    //push_back(&list, 8);
+    //delete_elem(&list, 2);
+    //pop_back(&list);
 
     list_dump(&list);
     //list_dtor(&list);

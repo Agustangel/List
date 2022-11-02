@@ -4,7 +4,7 @@
 
 #include "list.h"
 
-// TODO destroy the loop with realising field end in list
+
 //=========================================================================
 int list_ctor(list_t* list, size_t capacity)
 {
@@ -85,7 +85,6 @@ int list_dtor(list_t* list)
 int push_back(list_t* list, elem_t value)
 {
     insert_after(list, list->tail, value);
-    ++list->tail;
 
     return LIST_SUCCESS;
 }
@@ -95,7 +94,6 @@ int push_back(list_t* list, elem_t value)
 int pop_back(list_t* list)
 {
     delete_elem(list, list->tail);
-    --list->tail;
 
     return LIST_SUCCESS;
 }
@@ -114,7 +112,6 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
     ++list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
-    printf("position = %d, lognum = %d\n", position, lognum);
     //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
     listIndex_t free = list->free;                     // free save
@@ -131,7 +128,8 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
         }
         list->end = free;
         list->next[free] = -1;
-        
+        ++list->tail;
+
         return LIST_SUCCESS;
     }
     list->next[free] = list->next[position];            // free -> next[position]
@@ -168,12 +166,13 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
 
     list->prev[position] = free;
     list->next[list->prev[list->free]] = free;
+    ++list->tail;
 
     return LIST_SUCCESS;   
 }
 
 //=========================================================================
-// TODO update list->free
+
 int delete_elem(list_t* list, listIndex_t lognum)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
@@ -183,15 +182,33 @@ int delete_elem(list_t* list, listIndex_t lognum)
     --list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
-    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    printf("position = %d, lognum = %d\n", position, lognum);
+    //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+
+    if(position == list->tail)
+    {
+        list->next[position] = list->free;
+        list->free = position;
+
+        list->next[list->prev[position]] = FREE_INDEX;
+
+        list->data[position] = DATA_POISON;
+        list->prev[position] = FREE_INDEX;
+        --list->tail;
+
+        return LIST_SUCCESS;
+    }
 
     list->prev[list->next[position]] = list->prev[position];
     list->next[list->prev[position]] = list->next[position];
 
+    list->next[position] = list->free;
+    list->free = position;
+
     list->data[position] = DATA_POISON;
-    list->next[position] = list->free; // ? сделать так: list->free = position;
     list->prev[position] = FREE_INDEX;
-    
+    --list->tail;
+
     return LIST_SUCCESS; 
 }
 
@@ -210,7 +227,7 @@ int get_physical_number(list_t* list, listIndex_t lognum)
 
     for(int idx = START_INDEX; idx < lognum; ++idx)
     {
-        physnum = abs(list->next[physnum]);
+        physnum = list->next[physnum];
     }
 
     return physnum;
