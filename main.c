@@ -16,7 +16,7 @@ int main()
     push_back(&list, 5);
     push_back(&list, 1);
     //push_back(&list, 3);
-    insert_after(&list, 1, 7);
+    insert_before(&list, 2, 7);
     push_back(&list, 6);
     //delete_elem(&list, 2);
     //pop_back(&list);

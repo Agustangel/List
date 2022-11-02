@@ -112,7 +112,10 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
     ++list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
-    //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    if(position != NULL_INDEX)
+    {
+        CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    }
 
     listIndex_t free = list->free;                     // free save
     list->free = list->next[list->free];               // free up
@@ -155,7 +158,7 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     ++list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
-    //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
     listIndex_t free = list->free;
     list->free = list->next[list->free];
@@ -165,7 +168,7 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     list->prev[free] = list->prev[position];
 
     list->prev[position] = free;
-    list->next[list->prev[list->free]] = free;
+    list->next[list->prev[free]] = free;
     ++list->tail;
 
     return LIST_SUCCESS;   
@@ -182,8 +185,7 @@ int delete_elem(list_t* list, listIndex_t lognum)
     --list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
-    printf("position = %d, lognum = %d\n", position, lognum);
-    //CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
+    CHECK((position >= list->head) && (position <= list->tail), ERR_LIST_BAD_POSITION);
 
     if(position == list->tail)
     {
