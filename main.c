@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
+
 #include "list.h"
+#include "debug.h"
 
 
-
+//=========================================================================
 int main()
 {
     list_t list;
@@ -15,13 +17,14 @@ int main()
 
     push_back(&list, 5);
     push_back(&list, 1);
-    insert_before(&list, 2, 7);
+    insert_after(&list, 1, 7);
     push_back(&list, 6);
-    delete_elem(&list, 2);
-    pop_back(&list);
+    // delete_elem(&list, 2);
+    // pop_back(&list);
 
+    graph_dump(&list);
     list_dump(&list);
-    //list_dtor(&list);
+    list_dtor(&list);
 
     return 0;
 }

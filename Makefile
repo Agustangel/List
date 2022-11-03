@@ -11,6 +11,9 @@ main.o: main.c
 list.o: ${SOURCE}/list.c
 	gcc -g -O0 -I${INCLUDES}/ -c $^
 
+valgrind: list
+	valgrind --leak-check=yes ./list
+
 clean:
 	rm list main.o list.o
 	
