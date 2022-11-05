@@ -1,5 +1,5 @@
-# List on massives
-It is project for Ilab (Intel course for DREC MIPT). Doubly linked list realized on massives. Instead of Nodes with data, pointer on next and previous Nodes we have three massives: massive of data, massive of next Nodes, massive of previous Nodes. Node is index in massive, on this index elment of data equal data of this Node, element of next equal index of next Node, element of previous equal index of previous Node.
+# List on arrays
+It is project for Ilab (Intel course for DREC MIPT). Doubly linked list realized on arrays. Instead of Nodes with data, pointer on next and previous Nodes we have three arrays: array of data, array of next Nodes, array of previous Nodes. Node is index in array, on this index elment of data equal data of this Node, element of next equal index of next Node, element of previous equal index of previous Node.
 
 ## Index
 1. [Doxygen documentation.](#1-doxygen-documentation)
@@ -24,7 +24,7 @@ node = node->next; //go forward on next link
 int num = node->next->data; //num is equal to data of next Node of node 
 ```
 
-In list on massives:
+In list on arrays:
 ```c
 index = list->next[index]; //go forward on next link
 
@@ -38,7 +38,7 @@ for (Node* node = firstnode; node != NULL; node = node->next)
 }
 ```
 
-This cycle in list on massives:
+This cycle in list on arrays:
 ```c
 for (long long i = list->next[START_END]; i != START_END; i = list->next[i])
 {
@@ -60,7 +60,7 @@ If you call `int Linear (List* list)` list becomre linerized: logical numbers eq
 
 Example of Graphviz Dump (from [main](#4-example-of-main-for-debugging))
 
-![Example of Graphviz Dump (from [main](#4-example-of-main-for-debugging))](https://github.com/LegendaryHog/List/blob/main/logs/Graph_Dump0.png "a title")
+![Example of Graphviz Dump (from [main](#4-example-of-main-for-debugging))](https://github.com/Agustangel/List/blob/master/graph_log.jpeg "a title")
 
 All dumps saves in directory "logs" with numbering.
 
