@@ -9,7 +9,7 @@ It is project for Ilab (Intel course for DREC MIPT). Doubly linked list realized
 4. [Example of main for debugging.](#4-example-of-main-for-debugging)
 
 ## 1. Doxygen documentation.
-Documentation is there - https://github.com/LegendaryHog/List/tree/main/Documentation.
+Documentation is there - https://github.com/Agustangel/List/blob/master/include/list.h.
 
 ## 2. Features of work with list on arrays.
 
