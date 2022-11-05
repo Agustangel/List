@@ -11,10 +11,10 @@ It is project for Ilab (Intel course for DREC MIPT). Doubly linked list realized
 ## 1. Doxygen documentation.
 Documentation is there - https://github.com/LegendaryHog/List/tree/main/Documentation.
 
-## 2. Features of work with list on massives.
+## 2. Features of work with list on arrays.
 
-### Massives.
-The biggest trouble in work with this realization of list is massives. I show you examples.
+### arrays.
+The biggest trouble in work with this realization of list is arrays. I show you examples.
 
 In ordinary list on pointer:
 
@@ -62,8 +62,6 @@ Example of Graphviz Dump (from [main](#4-example-of-main-for-debugging))
 
 ![Example of Graphviz Dump (from [main](#4-example-of-main-for-debugging))](https://github.com/Agustangel/List/blob/master/graph_log.jpeg "a title")
 
-All dumps saves in directory "logs" with numbering.
-
 ## 4. Example of main for debugging.
 
 ```c
@@ -83,7 +81,7 @@ int main (void)
     delete_elem(&list, 2);
     pop_back(&list);
     
-    Linear (&list);
+    list_linearize(&list);
     graph_dump(&list);
     list_dump(&list);
     
