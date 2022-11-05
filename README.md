@@ -65,7 +65,8 @@ Example of Graphviz Dump (from [main](#4-example-of-main-for-debugging))
 ## 4. Example of main for debugging.
 
 ```c
-#include "List.h"
+#include "list.h"
+#include "debug.h"
 
 int main (void)
 {
