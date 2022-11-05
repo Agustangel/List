@@ -9,7 +9,7 @@ It is project for Ilab (Intel course for DREC MIPT). Doubly linked list realized
 4. [Example of main for debugging.](#4-example-of-main-for-debugging)
 
 ## 1. Doxygen documentation.
-Documentation is there - https://github.com/LegendaryHog/List/tree/main/Documentation.
+Documentation is there - https://github.com/Agustangel/List/blob/master/include/list.h.
 
 ## 2. Features of work with list on arrays.
 
@@ -50,11 +50,12 @@ Anological for cycles on previous link.
 
 ### Push
 
-To push in list, use `int List_Ins_Aft (List* list, long long last, data_t push)`.
+To push in list, use `insert_after(&list, lognum, value)`, `insert_before(&list, lognum, value)`, `push_back(&list, value)`.
 
-*Warning!!!*: last is **physical** number in list. To take physical number by logical number use fucntion `long long Logic_To_Phys (List* list, long long lognum)` taht return physical number.
+*Warning!!!*: last is **physical** number in list. To take physical number by logical number use fucntion `get_physical_number(list, lognum);
+` that return physical number.
 
-If you call `int Linear (List* list)` list becomre linerized: logical numbers equal to physical.
+If you call `list_linearize(&list)` list becomre linerized: logical numbers equal to physical.
 
 ## 3. Graphviz dump.
 
