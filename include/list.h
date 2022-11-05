@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 
 //=========================================================================
@@ -35,6 +36,7 @@ typedef struct list_t
     size_t capacity;
 
     listStatus_t status;
+    bool linflag;
     
 }list_t;
 

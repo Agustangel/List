@@ -12,9 +12,9 @@ int list_ctor(list_t* list, size_t capacity)
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(capacity > 0, ERR_LIST_BAD_SIZE);
 
-    list->data = (elem_t*) calloc(capacity + 2, sizeof(elem_t));
-    list->next = (listIndex_t*) calloc(capacity + 2, sizeof(listIndex_t));
-    list->prev = (listIndex_t*) calloc(capacity + 2, sizeof(listIndex_t));
+    list->data = (elem_t*) calloc(capacity + 1, sizeof(elem_t));
+    list->next = (listIndex_t*) calloc(capacity + 1, sizeof(listIndex_t));
+    list->prev = (listIndex_t*) calloc(capacity + 1, sizeof(listIndex_t));
 
     CHECK(list->data !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(list->next !=  NULL, ERR_LIST_NULL_PTR);
@@ -33,7 +33,8 @@ int list_ctor(list_t* list, size_t capacity)
     list->free = START_INDEX;
     list->end  = NULL_INDEX;
 
-    list->status = LIST_SUCCESS;
+    list->status  = LIST_SUCCESS;
+    list->linflag = 1;
 
     return LIST_SUCCESS;
 }
@@ -44,7 +45,7 @@ int list_init_data(list_t* list)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
 
-    for(int idx = START_INDEX; idx < list->capacity + 2; ++idx)
+    for(int idx = START_INDEX; idx < list->capacity + 1; ++idx)
     {
         list->data[idx] = DATA_POISON;
         list->next[idx] = START_INDEX + idx;
@@ -104,6 +105,11 @@ int insert_after(list_t* list, listIndex_t lognum, elem_t value)
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(lognum >= 0, ERR_LIST_BAD_POSITION);
 
+    if ((list->linflag == 1) && (lognum != list->size))
+    {
+        list->linflag = 0;
+    }
+
     if (list->size + 1 == list->capacity)
     {
         list_resize(list);
@@ -149,6 +155,11 @@ int insert_before(list_t* list, listIndex_t lognum, elem_t value)
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
 
+    if ((list->linflag == 1) && (lognum != list->free))
+    {
+        list->linflag = 0;
+    }
+
     if (list->size + 1 == list->capacity)
     {
         list_resize(list);
@@ -178,8 +189,12 @@ int delete_elem(list_t* list, listIndex_t lognum)
 {
     CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
     CHECK(lognum > 0, ERR_LIST_BAD_POSITION);
-
     CHECK(list->size > 0, ERR_LIST_UNDERFLOW);
+
+    if ((list->linflag == 1) && (lognum != list->size))
+    {
+        list->linflag = 0;
+    }
     --list->size;
 
     listIndex_t position = get_physical_number(list, lognum);
@@ -231,6 +246,60 @@ int get_physical_number(list_t* list, listIndex_t lognum)
     }
 
     return physnum;
+}
+
+//=========================================================================
+
+int list_linearize(list_t* list)
+{
+    CHECK(list !=  NULL, ERR_LIST_NULL_PTR);
+
+    elem_t* new_data = (elem_t*) calloc(list->capacity + 1, sizeof(elem_t));
+    listIndex_t* new_next = (listIndex_t*) calloc(list->capacity + 1, sizeof(listIndex_t));
+    listIndex_t* new_prev = (listIndex_t*) calloc(list->capacity + 1, sizeof(listIndex_t));
+
+    int elem_num = START_INDEX;
+
+    new_data[NULL_INDEX] = DATA_POISON;
+    new_data[START_INDEX] = list->data[START_INDEX];
+    for (int idx = START_INDEX + 1; idx < list->size + 1; ++idx)
+    {
+        new_data[idx] = list->data[list->next[elem_num]];
+        elem_num = list->next[elem_num];
+    }
+    list->free = list->size + 1;
+
+    new_next[NULL_INDEX] = INDEX_POISON;
+    for (int idx = START_INDEX; idx < list->free; ++idx)
+    {
+        new_next[idx] = (idx + 1 % list->free) ? idx + 1 : FREE_INDEX;
+    }
+    for (int idx = list->free; idx < list->capacity; ++idx)
+    {
+        new_next[idx] = idx + 1;
+    }
+
+    new_prev[NULL_INDEX] = INDEX_POISON;
+    for (int idx = 1; idx < list->free; ++idx)
+    {
+        new_prev[idx] = idx - 1;
+    }
+    for (int idx = list->free; idx < list->capacity; ++idx)
+    {
+        new_prev[idx] = FREE_INDEX;
+    }
+
+    free (list->data);
+    free (list->next);
+    free (list->prev);
+    
+    list->data = new_data;
+    list->next = new_next;
+    list->prev = new_prev;
+
+    list->linflag = 1;
+
+    return LIST_SUCCESS;
 }
 
 //=========================================================================

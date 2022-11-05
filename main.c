@@ -19,7 +19,7 @@ int main()
     push_back(&list, 1);
     insert_after(&list, 1, 7);
     push_back(&list, 6);
-    // delete_elem(&list, 2);
+    //delete_elem(&list, 2);
     // pop_back(&list);
 
     graph_dump(&list);
