@@ -140,3 +140,8 @@ int list_veryfi(list_t* list);
 /*! \param list - pointer to list on stack.
  *  \returns result - list_codes. */
 int graph_dump(list_t* list);
+
+//! Function that linearizes a list
+/*! \param list - pointer to list on stack.
+ *  \returns result - list_codes. */
+int list_linearize(list_t* list);
