@@ -66,6 +66,28 @@ rankdir = RL;
 		 <td> 6 </td>
 	 </tr>
 	</table>>, style = filled, color = darkgreen, fillcolor = lightgreen]
+	6 [shape = plaintext, label =<
+	<table>
+	<tr>
+		<td colspan="3"> nan </td>
+	 </tr>
+	 <tr>
+		 <td> -1 </td>
+		 <td> 6 </td>
+		 <td> 7 </td>
+	 </tr>
+	</table>>, style = filled, color = darkgreen, fillcolor = lightgreen]
+	7 [shape = plaintext, label =<
+	<table>
+	<tr>
+		<td colspan="3"> nan </td>
+	 </tr>
+	 <tr>
+		 <td> -1 </td>
+		 <td> 7 </td>
+		 <td> 8 </td>
+	 </tr>
+	</table>>, style = filled, color = darkgreen, fillcolor = lightgreen]
 	0 -> -666 [color = dodgerblue4]; 
 	0 -> -666 [color = dodgerblue4]; 
 	1 -> 3 [color = deepskyblue2]; 
@@ -75,8 +97,9 @@ rankdir = RL;
 	3 -> 2 [color = deepskyblue2]; 
 	2 -> 3 [color = deepskyblue2]; 
 	4 -> -1 [color = darkgreen]; 
-	5 -> 6 [color = darkred]; 
-	6 -> 5 [color = darkred]; 
+	5 -> 6 [color = darkgreen]; 
+	6 -> 7 [color = darkgreen]; 
+	7 -> 8 [color = darkgreen]; 
 	HEAD [style = filled, color = black, fillcolor = salmon1]; 
 	TAIL [style = filled, color = black, fillcolor = salmon1]; 
 	FREE [style = filled, color = black, fillcolor = salmon1]; 
