@@ -71,37 +71,24 @@ All dumps saves in directory "logs" with numbering.
 
 int main (void)
 {
-    List* list = (List*) calloc (1, sizeof (List));
+    list_t list;
+    size_t capacity = 0;
+    scanf("%zu", &capacity);
 
-    List_Ctor (list);
-    Dbg_Dump (list);
+    list_ctor(&list, capacity);
 
-    List_Ins_Aft (list, 0, 20);
-    List_Ins_Aft (list, 0, 10);
-    List_Ins_Aft (list, 1, 30);
-    Dbg_Dump (list);
-    Graph_Dump (list);
-    Linear (list);
-    Dbg_Dump (list);
-    List_Dtor (list);
-    free (list);
+    push_back(&list, 5);
+    push_back(&list, 1);
+    insert_after(&list, 1, 7);
+    delete_elem(&list, 2);
+    pop_back(&list);
+    
+    Linear (&list);
+    graph_dump(&list);
+    list_dump(&list);
+    
+    list_dtor(&list);
+
     return 0;
 }
 ```
-
-Makefile for debug with this main.
-```Makefile
-all: comp run
-
-comp:
-	gcc List.c main.c -Wall -Wextra -o list.out
-
-run:
-	./list.out
-
-val_run:
-	valgrind --leak-check=full -s ./list.out
-```
-
-
-
