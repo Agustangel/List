@@ -7,23 +7,18 @@
 
 
 //=========================================================================
-//! constant for indicates free position
-#define FREE_INDEX -1
-
-//! constant for indicates poison index
-#define INDEX_POISON -666
-
-//! constant for indicates start index
-#define START_INDEX 1
+//! enumeration of constants
+enum
+{
+    NULL_INDEX   = 0,
+    START_INDEX  = 1,
+    FREE_INDEX   = -1,
+    INDEX_POISON = -666,
+    ERROR_NUMBER = 8
+};
 
 //! constant for indicates poison data in list
 #define DATA_POISON NAN
-
-//! constant for indicates the first index in arrays
-#define NULL_INDEX 0
-
-//! constant for indicates numbers of errors
-#define ERROR_NUMBER 8
 
 //=========================================================================
 
